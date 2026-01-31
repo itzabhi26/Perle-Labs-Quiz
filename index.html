@@ -1,107 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Perle Labs – Contributor Quiz</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  color: #e5e7eb;
-}
-.container {
-  max-width: 700px;
-  margin: auto;
-  padding: 40px 20px;
-}
-.logo {
-  text-align: center;
-  margin-bottom: 20px;
-}
-.logo img {
-  width: 90px;
-  filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
-}
-h1 {
-  text-align: center;
-}
-.question-box {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 25px;
-  margin-top: 30px;
-}
-.question-text {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-.option {
-  display: block;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.option input {
-  margin-right: 8px;
-}
-.correct {
-  background: rgba(34,197,94,0.25);
-  border-color: #22c55e;
-}
-.wrong {
-  background: rgba(239,68,68,0.25);
-  border-color: #ef4444;
-}
-#timer {
-  text-align: right;
-  opacity: 0.8;
-  margin-top: 10px;
-}
-#result {
-  text-align: center;
-  margin-top: 30px;
-  font-size: 22px;
-  font-weight: bold;
-}
-.badge {
-  font-size: 26px;
-  margin-top: 10px;
-}
-footer {
-  margin-top: 50px;
-  text-align: center;
-  font-size: 12px;
-  opacity: 0.6;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-<div class="logo">
-  <img src="https://i.postimg.cc/25QZTBk4/jwl-Om5I9-400x400-(1).png" alt="Logo">
-</div>
-
-<h1>Perle Labs – Contributor Quiz</h1>
-
-<div id="quiz"></div>
-<div id="timer"></div>
-<div id="result"></div>
-
-<footer>
-  Community-created quiz • <span style="opacity:0.8;">Built by itzabhi</span>
-</footer>
-
-</div>
-
 <script>
 const questions = [
  {q:"What is the main goal of Perle Labs?", o:["Social media","AI training data","Gaming","NFT marketplace"], a:1},
@@ -119,14 +15,14 @@ const questions = [
 let index = 0;
 let score = 0;
 let locked = false;
-let timerInterval;
+let countdown;
 
 const quizDiv = document.getElementById("quiz");
 const timerDiv = document.getElementById("timer");
 
 function loadQuestion() {
   locked = false;
-  clearInterval(timerInterval);
+  quizDiv.innerHTML = "";
   timerDiv.innerText = "Next question in 10s";
 
   const q = questions[index];
@@ -146,11 +42,12 @@ function loadQuestion() {
   quizDiv.innerHTML = html;
 
   let time = 10;
-  timerInterval = setInterval(()=>{
+  clearInterval(countdown);
+  countdown = setInterval(()=>{
     time--;
     timerDiv.innerText = "Next question in " + time + "s";
-    if(time===0){
-      clearInterval(timerInterval);
+    if(time === 0){
+      clearInterval(countdown);
       nextQuestion();
     }
   },1000);
@@ -159,18 +56,19 @@ function loadQuestion() {
 function selectOption(i, el){
   if(locked) return;
   locked = true;
-  clearInterval(timerInterval);
 
   const options = document.querySelectorAll(".option");
   options.forEach((opt,idx)=>{
-    if(idx===questions[index].a) opt.classList.add("correct");
-    if(idx===i && i!==questions[index].a) opt.classList.add("wrong");
     opt.querySelector("input").disabled = true;
+    if(idx === i){
+      if(i === questions[index].a){
+        opt.classList.add("correct");
+        score++;
+      } else {
+        opt.classList.add("wrong");
+      }
+    }
   });
-
-  if(i===questions[index].a) score++;
-
-  setTimeout(nextQuestion, 10000);
 }
 
 function nextQuestion(){
@@ -183,10 +81,11 @@ function nextQuestion(){
 }
 
 function showResult(){
+  clearInterval(countdown);
   const percent = Math.round((score/questions.length)*100);
   let badge = "🥉 Beginner";
-  if(percent>=80) badge="🥇 Expert";
-  else if(percent>=50) badge="🥈 Intermediate";
+  if(percent >= 80) badge = "🥇 Expert";
+  else if(percent >= 50) badge = "🥈 Intermediate";
 
   quizDiv.innerHTML = "";
   timerDiv.innerHTML = "";
@@ -196,6 +95,3 @@ function showResult(){
 
 loadQuestion();
 </script>
-
-</body>
-</html>
