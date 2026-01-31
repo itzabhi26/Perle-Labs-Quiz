@@ -13,63 +13,56 @@ body {
   color: #e5e7eb;
 }
 .container {
-  max-width: 850px;
+  max-width: 700px;
   margin: auto;
   padding: 40px 20px;
 }
 .logo {
-  display: flex;
-  justify-content: center;
+  text-align: center;
   margin-bottom: 20px;
 }
 .logo img {
   width: 90px;
-  filter: drop-shadow(0 0 18px rgba(255,255,255,0.35));
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
 }
 h1 {
   text-align: center;
 }
-.subtitle {
-  text-align: center;
-  opacity: 0.8;
-  margin-bottom: 40px;
-}
-.question {
+.question-box {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 22px;
+  padding: 25px;
+  margin-top: 30px;
 }
-.question h3 {
-  margin-bottom: 12px;
+.question-text {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 .option {
   display: block;
-  margin-bottom: 8px;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
   cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.option input {
+  margin-right: 8px;
 }
 .correct {
   background: rgba(34,197,94,0.25);
-  border: 1px solid #22c55e;
+  border-color: #22c55e;
 }
 .wrong {
   background: rgba(239,68,68,0.25);
-  border: 1px solid #ef4444;
+  border-color: #ef4444;
 }
-button {
-  display: block;
-  margin: 30px auto 0;
-  padding: 14px 30px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(135deg, #6366f1, #22d3ee);
-  color: #020617;
-  font-weight: bold;
+#timer {
+  text-align: right;
+  opacity: 0.8;
+  margin-top: 10px;
 }
 #result {
   text-align: center;
@@ -78,13 +71,13 @@ button {
   font-weight: bold;
 }
 .badge {
-  margin-top: 10px;
   font-size: 26px;
+  margin-top: 10px;
 }
 footer {
   margin-top: 50px;
   text-align: center;
-  font-size: 13px;
+  font-size: 12px;
   opacity: 0.6;
 }
 </style>
@@ -94,15 +87,21 @@ footer {
 <div class="container">
 
 <div class="logo">
-<img src="https://i.postimg.cc/25QZTBk4/jwl-Om5I9-400x400-(1).png" alt="Perle Labs Logo">
+  <img src="https://i.postimg.cc/25QZTBk4/jwl-Om5I9-400x400-(1).png" alt="Logo">
 </div>
 
 <h1>Perle Labs – Contributor Quiz</h1>
-<p class="subtitle">Test your understanding of the Perle ecosystem</p>
 
-<form id="quizForm">
+<div id="quiz"></div>
+<div id="timer"></div>
+<div id="result"></div>
 
-<!-- QUESTIONS -->
+<footer>
+  Community-created quiz • <span style="opacity:0.8;">Built by itzabhi</span>
+</footer>
+
+</div>
+
 <script>
 const questions = [
  {q:"What is the main goal of Perle Labs?", o:["Social media","AI training data","Gaming","NFT marketplace"], a:1},
@@ -113,61 +112,89 @@ const questions = [
  {q:"Why consistency matters?", o:["Fast rewards","Trust","Spam","Rules break"], a:1},
  {q:"Web3 represents?", o:["Centralized","Trading","Transparency","Closed"], a:2},
  {q:"Improve impact by?", o:["Spam","Repeat","Help others","Off-topic"], a:2},
- {q:"Human-in-the-loop?", o:["AI alone","Humans train AI","Bots only","No humans"], a:1},
+ {q:"Human-in-the-loop means?", o:["AI alone","Humans train AI","Bots only","No humans"], a:1},
  {q:"Core community value?", o:["Quantity","Fast rewards","Respect","Competition"], a:2}
 ];
-</script>
 
-<div id="quiz"></div>
+let index = 0;
+let score = 0;
+let locked = false;
+let timerInterval;
 
-<button type="button" onclick="submitQuiz()">Submit Quiz</button>
-</form>
-
-<div id="result"></div>
-
-<footer>
-This is a community-created, unofficial quiz for Perle Labs contributors.
-</footer>
-
-</div>
-
-<script>
 const quizDiv = document.getElementById("quiz");
+const timerDiv = document.getElementById("timer");
 
-questions.forEach((q, i) => {
-  let html = `<div class="question"><h3>${i+1}. ${q.q}</h3>`;
-  q.o.forEach((opt, j) => {
+function loadQuestion() {
+  locked = false;
+  clearInterval(timerInterval);
+  timerDiv.innerText = "Next question in 10s";
+
+  const q = questions[index];
+  let html = `
+    <div class="question-box">
+      <div class="question-text">${index+1}. ${q.q}</div>
+  `;
+  q.o.forEach((opt,i)=>{
     html += `
-    <label class="option">
-      <input type="radio" name="q${i}" value="${j}"> ${opt}
-    </label>`;
+      <label class="option">
+        <input type="radio" name="opt" onclick="selectOption(${i}, this)">
+        ${opt}
+      </label>
+    `;
   });
   html += `</div>`;
-  quizDiv.innerHTML += html;
-});
+  quizDiv.innerHTML = html;
 
-function submitQuiz() {
-  let score = 0;
-  questions.forEach((q, i) => {
-    const selected = document.querySelector(`input[name="q${i}"]:checked`);
-    const options = document.querySelectorAll(`input[name="q${i}"]`);
-    options.forEach((opt, idx) => {
-      const label = opt.parentElement;
-      if (idx === q.a) label.classList.add("correct");
-      if (selected && opt === selected && idx !== q.a)
-        label.classList.add("wrong");
-    });
-    if (selected && parseInt(selected.value) === q.a) score++;
+  let time = 10;
+  timerInterval = setInterval(()=>{
+    time--;
+    timerDiv.innerText = "Next question in " + time + "s";
+    if(time===0){
+      clearInterval(timerInterval);
+      nextQuestion();
+    }
+  },1000);
+}
+
+function selectOption(i, el){
+  if(locked) return;
+  locked = true;
+  clearInterval(timerInterval);
+
+  const options = document.querySelectorAll(".option");
+  options.forEach((opt,idx)=>{
+    if(idx===questions[index].a) opt.classList.add("correct");
+    if(idx===i && i!==questions[index].a) opt.classList.add("wrong");
+    opt.querySelector("input").disabled = true;
   });
 
-  const percent = (score / questions.length) * 100;
-  let badge = "🥉 Beginner";
-  if (percent >= 80) badge = "🥇 Expert";
-  else if (percent >= 50) badge = "🥈 Intermediate";
+  if(i===questions[index].a) score++;
 
-  document.getElementById("result").innerHTML =
-    `Your Score: ${score}/10 (${percent}%)<div class="badge">${badge}</div>`;
+  setTimeout(nextQuestion, 10000);
 }
+
+function nextQuestion(){
+  index++;
+  if(index < questions.length){
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult(){
+  const percent = Math.round((score/questions.length)*100);
+  let badge = "🥉 Beginner";
+  if(percent>=80) badge="🥇 Expert";
+  else if(percent>=50) badge="🥈 Intermediate";
+
+  quizDiv.innerHTML = "";
+  timerDiv.innerHTML = "";
+  document.getElementById("result").innerHTML =
+    `Score: ${score}/10 (${percent}%)<div class="badge">${badge}</div>`;
+}
+
+loadQuestion();
 </script>
 
 </body>
