@@ -1,207 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Perle Labs – Contributor Quiz</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <style>
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background:#020617;
-  color:#e5e7eb;
+  font-family: "Inter", Arial, sans-serif;
+  background:#f6faf8;
+  color:#1f2937;
 }
-.container{
-  max-width:700px;
+.app{
+  max-width:1100px;
   margin:auto;
   padding:40px 20px;
+  display:grid;
+  grid-template-columns: 2fr 1fr;
+  gap:30px;
+}
+.card{
+  background:#ffffff;
+  border-radius:16px;
+  padding:30px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
 }
 .logo{
-  text-align:center;
   margin-bottom:20px;
 }
 .logo img{
-  width:90px;
+  width:70px;
 }
-h1{
-  text-align:center;
-  margin-bottom:10px;
-}
-.question-box{
-  background:#0f172a;
-  border-radius:12px;
-  padding:25px;
-  margin-top:30px;
-}
-.question-text{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:20px;
+.question{
+  font-size:26px;
+  font-weight:700;
+  margin-bottom:30px;
 }
 .option{
-  display:block;
-  padding:10px;
-  margin-bottom:10px;
-  border-radius:8px;
-  background:#020617;
-  border:1px solid #1e293b;
+  border:2px solid #e5e7eb;
+  border-radius:12px;
+  padding:14px 16px;
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:14px;
   cursor:pointer;
 }
-.option input{
-  margin-right:8px;
+.option span{
+  width:36px;
+  height:36px;
+  border-radius:8px;
+  background:#f1f5f9;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
 }
-.correct{
-  background:#064e3b;
-  border-color:#22c55e;
+.option.correct{
+  background:#ecfdf5;
+  border-color:#10b981;
 }
-.wrong{
-  background:#450a0a;
+.option.wrong{
+  background:#fef2f2;
   border-color:#ef4444;
 }
-#timer{
-  text-align:right;
-  margin-top:10px;
-  opacity:0.7;
+.submit{
+  margin-top:20px;
+  background:#10b981;
+  color:white;
+  border:none;
+  padding:14px 28px;
+  border-radius:999px;
+  font-size:16px;
+  cursor:pointer;
 }
-#result{
+.right{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+.timer{
   text-align:center;
-  margin-top:30px;
-  font-size:22px;
-  font-weight:bold;
 }
-.badge{
+.circle{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  border:8px solid #d1fae5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-size:26px;
-  margin-top:10px;
+  font-weight:700;
+  color:#10b981;
+  margin:auto;
+}
+.list{
+  background:#ffffff;
+  border-radius:16px;
+  padding:20px;
+}
+.list div{
+  padding:10px 12px;
+  border-radius:8px;
+  margin-bottom:8px;
+  background:#f1f5f9;
+}
+.list .active{
+  background:#d1fae5;
+  font-weight:600;
 }
 footer{
-  margin-top:50px;
+  grid-column:1/-1;
   text-align:center;
   font-size:12px;
-  opacity:0.6;
+  opacity:.6;
 }
 </style>
 </head>
 
 <body>
-<div class="container">
 
-<div class="logo">
-  <img src="https://i.postimg.cc/25QZTBk4/jwl-Om5I9-400x400-(1).png" alt="Logo">
+<div class="app">
+
+<!-- LEFT -->
+<div class="card">
+  <div class="logo">
+    <img src="https://i.postimg.cc/25QZTBk4/jwl-Om5I9-400x400-(1).png">
+  </div>
+
+  <div id="q" class="question"></div>
+  <div id="opts"></div>
+
+  <button class="submit" onclick="next()">Submit Answer</button>
 </div>
 
-<h1>Perle Labs – Contributor Quiz</h1>
+<!-- RIGHT -->
+<div class="right">
+  <div class="card timer">
+    <div class="circle" id="time">10</div>
+    <p>Timer Remaining</p>
+  </div>
 
-<div id="quiz"></div>
-<div id="timer"></div>
-<div id="result"></div>
+  <div class="list" id="list"></div>
+</div>
 
 <footer>
-Community-created quiz • <span>Built by itzabhi</span>
+Community-created quiz • Built by itzabhi
 </footer>
 
 </div>
 
 <script>
-const questions = [
- {q:"What is the main goal of Perle Labs?", o:["Social media","AI training data","Gaming","NFT marketplace"], a:1},
- {q:"What does Perle.xyz focus on?", o:["AI tools","Web2 SaaS","Web3 community","Cloud storage"], a:2},
- {q:"Role of contributors?", o:["Spam","Messages only","AI input","Rewards only"], a:2},
- {q:"Quality contribution means?", o:["Volume","Short replies","Value-driven","Random chat"], a:2},
- {q:"Perle.ai is built for?", o:["Gamers","Traders","AI enterprises","Creators"], a:2},
- {q:"Why consistency matters?", o:["Fast rewards","Trust","Spam","Rules break"], a:1},
- {q:"Web3 represents?", o:["Centralized","Trading","Transparency","Closed"], a:2},
- {q:"Improve impact by?", o:["Spam","Repeat","Help others","Off-topic"], a:2},
- {q:"Human-in-the-loop means?", o:["AI alone","Humans train AI","Bots only","No humans"], a:1},
- {q:"Core community value?", o:["Quantity","Fast rewards","Respect","Competition"], a:2}
+const questions=[
+ {q:"What is the main goal of Perle Labs?",o:["Social media","AI training data","Gaming","NFT marketplace"],a:1},
+ {q:"What does Perle.xyz focus on?",o:["AI tools","Web2 SaaS","Web3 community","Cloud storage"],a:2},
+ {q:"Role of contributors?",o:["Spam","Messages only","AI input","Rewards only"],a:2}
 ];
 
-let index = 0;
-let score = 0;
-let locked = false;
-let timer;
+let i=0,selected=null,t=10,timer;
 
-const quizDiv = document.getElementById("quiz");
-const timerDiv = document.getElementById("timer");
+const qEl=document.getElementById("q");
+const oEl=document.getElementById("opts");
+const timeEl=document.getElementById("time");
+const listEl=document.getElementById("list");
 
-function loadQuestion(){
-  locked = false;
-  quizDiv.innerHTML = "";
-  let q = questions[index];
-
-  let html = `
-    <div class="question-box">
-      <div class="question-text">${index+1}. ${q.q}</div>
-  `;
-
-  q.o.forEach((opt,i)=>{
-    html += `
-      <label class="option">
-        <input type="radio" name="opt" onclick="selectOption(${i}, this)">
-        ${opt}
-      </label>
-    `;
+function load(){
+  selected=null;
+  qEl.innerText=questions[i].q;
+  oEl.innerHTML="";
+  questions[i].o.forEach((op,idx)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    d.innerHTML=`<span>${String.fromCharCode(65+idx)}</span>${op}`;
+    d.onclick=()=>pick(d,idx);
+    oEl.appendChild(d);
   });
+  renderList();
+  startTimer();
+}
 
-  html += `</div>`;
-  quizDiv.innerHTML = html;
+function pick(el,idx){
+  if(selected!==null) return;
+  selected=idx;
+  if(idx===questions[i].a) el.classList.add("correct");
+  else el.classList.add("wrong");
+}
 
-  let time = 10;
-  timerDiv.innerText = "Next question in 10s";
+function startTimer(){
   clearInterval(timer);
-
-  timer = setInterval(()=>{
-    time--;
-    timerDiv.innerText = "Next question in " + time + "s";
-    if(time === 0){
-      clearInterval(timer);
-      nextQuestion();
-    }
+  t=10;
+  timeEl.innerText=t;
+  timer=setInterval(()=>{
+    t--;
+    timeEl.innerText=t;
+    if(t===0){ clearInterval(timer); next(); }
   },1000);
 }
 
-function selectOption(i){
-  if(locked) return;
-  locked = true;
+function next(){
+  i++;
+  if(i<questions.length) load();
+}
 
-  const options = document.querySelectorAll(".option");
-  options.forEach((opt,idx)=>{
-    opt.querySelector("input").disabled = true;
-    if(idx === i){
-      if(i === questions[index].a){
-        opt.classList.add("correct");
-        score++;
-      } else {
-        opt.classList.add("wrong");
-      }
-    }
+function renderList(){
+  listEl.innerHTML="";
+  questions.forEach((_,idx)=>{
+    const d=document.createElement("div");
+    d.innerText="Quiz question "+(idx+1);
+    if(idx===i) d.classList.add("active");
+    listEl.appendChild(d);
   });
 }
 
-function nextQuestion(){
-  index++;
-  if(index < questions.length){
-    loadQuestion();
-  } else {
-    showResult();
-  }
-}
-
-function showResult(){
-  clearInterval(timer);
-  quizDiv.innerHTML = "";
-  timerDiv.innerHTML = "";
-
-  let percent = Math.round((score / questions.length) * 100);
-  let badge = "🥉 Beginner";
-  if(percent >= 80) badge = "🥇 Expert";
-  else if(percent >= 50) badge = "🥈 Intermediate";
-
-  document.getElementById("result").innerHTML =
-    `Score: ${score}/10 (${percent}%)<div class="badge">${badge}</div>`;
-}
-
-loadQuestion();
+load();
 </script>
 
 </body>
