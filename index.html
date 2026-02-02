@@ -8,7 +8,7 @@
 <style>
 body{
   margin:0;
-  font-family: "Inter", Arial, sans-serif;
+  font-family:Inter, Arial, sans-serif;
   background:#f6faf8;
   color:#1f2937;
 }
@@ -17,25 +17,20 @@ body{
   margin:auto;
   padding:40px 20px;
   display:grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns:2fr 1fr;
   gap:30px;
 }
 .card{
   background:#ffffff;
   border-radius:16px;
   padding:30px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
 }
-.logo{
-  margin-bottom:20px;
-}
-.logo img{
-  width:70px;
-}
+.logo img{width:70px;}
 .question{
   font-size:26px;
   font-weight:700;
-  margin-bottom:30px;
+  margin:25px 0;
 }
 .option{
   border:2px solid #e5e7eb;
@@ -43,63 +38,34 @@ body{
   padding:14px 16px;
   margin-bottom:14px;
   display:flex;
-  align-items:center;
   gap:14px;
   cursor:pointer;
 }
 .option span{
-  width:36px;
-  height:36px;
-  border-radius:8px;
+  width:36px;height:36px;border-radius:8px;
   background:#f1f5f9;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex;align-items:center;justify-content:center;
   font-weight:700;
 }
-.option.correct{
-  background:#ecfdf5;
-  border-color:#10b981;
-}
-.option.wrong{
-  background:#fef2f2;
-  border-color:#ef4444;
-}
+.option.correct{background:#ecfdf5;border-color:#10b981;}
+.option.wrong{background:#fef2f2;border-color:#ef4444;}
 .submit{
   margin-top:20px;
   background:#10b981;
-  color:white;
+  color:#fff;
   border:none;
-  padding:14px 28px;
+  padding:14px 30px;
   border-radius:999px;
   font-size:16px;
   cursor:pointer;
 }
-.right{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-}
-.timer{
-  text-align:center;
-}
+.right{display:flex;flex-direction:column;gap:20px;}
 .circle{
-  width:120px;
-  height:120px;
-  border-radius:50%;
+  width:120px;height:120px;border-radius:50%;
   border:8px solid #d1fae5;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:26px;
-  font-weight:700;
-  color:#10b981;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:700;color:#10b981;
   margin:auto;
-}
-.list{
-  background:#ffffff;
-  border-radius:16px;
-  padding:20px;
 }
 .list div{
   padding:10px 12px;
@@ -107,47 +73,46 @@ body{
   margin-bottom:8px;
   background:#f1f5f9;
 }
-.list .active{
-  background:#d1fae5;
-  font-weight:600;
-}
+.list .active{background:#d1fae5;font-weight:600;}
 footer{
   grid-column:1/-1;
   text-align:center;
   font-size:12px;
   opacity:.6;
 }
+.result{
+  text-align:center;
+}
+.badge{font-size:28px;margin-top:10px;}
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
 <!-- LEFT -->
-<div class="card">
+<div class="card" id="left">
   <div class="logo">
     <img src="https://i.postimg.cc/25QZTBk4/jwl-Om5I9-400x400-(1).png">
   </div>
 
-  <div id="q" class="question"></div>
-  <div id="opts"></div>
+  <div id="question" class="question"></div>
+  <div id="options"></div>
 
-  <button class="submit" onclick="next()">Submit Answer</button>
+  <button class="submit" onclick="nextQuestion()">Submit Answer</button>
 </div>
 
 <!-- RIGHT -->
 <div class="right">
-  <div class="card timer">
+  <div class="card">
     <div class="circle" id="time">10</div>
-    <p>Timer Remaining</p>
+    <p style="text-align:center">Timer Remaining</p>
   </div>
-
-  <div class="list" id="list"></div>
+  <div class="card list" id="list"></div>
 </div>
 
 <footer>
-Community-created quiz • Built by itzabhi
+Created by <strong>Itz_Abhi</strong>
 </footer>
 
 </div>
@@ -156,19 +121,27 @@ Community-created quiz • Built by itzabhi
 const questions=[
  {q:"What is the main goal of Perle Labs?",o:["Social media","AI training data","Gaming","NFT marketplace"],a:1},
  {q:"What does Perle.xyz focus on?",o:["AI tools","Web2 SaaS","Web3 community","Cloud storage"],a:2},
- {q:"Role of contributors?",o:["Spam","Messages only","AI input","Rewards only"],a:2}
+ {q:"Role of contributors?",o:["Spam","Messages only","AI input","Rewards only"],a:2},
+ {q:"Quality contribution means?",o:["Volume","Short replies","Value-driven","Random chat"],a:2},
+ {q:"Perle.ai is built for?",o:["Gamers","Traders","AI enterprises","Creators"],a:2},
+ {q:"Why consistency matters?",o:["Fast rewards","Trust","Spam","Rules break"],a:1},
+ {q:"Web3 represents?",o:["Centralized","Trading","Transparency","Closed"],a:2},
+ {q:"Improve impact by?",o:["Spam","Repeat","Help others","Off-topic"],a:2},
+ {q:"Human-in-the-loop means?",o:["AI alone","Humans train AI","Bots only","No humans"],a:1},
+ {q:"Core community value?",o:["Quantity","Fast rewards","Respect","Competition"],a:2}
 ];
 
-let i=0,selected=null,t=10,timer;
+let i=0,selected=null,score=0,time=10,timer;
 
-const qEl=document.getElementById("q");
-const oEl=document.getElementById("opts");
+const qEl=document.getElementById("question");
+const oEl=document.getElementById("options");
 const timeEl=document.getElementById("time");
 const listEl=document.getElementById("list");
+const left=document.getElementById("left");
 
 function load(){
   selected=null;
-  qEl.innerText=questions[i].q;
+  qEl.innerText=(i+1)+". "+questions[i].q;
   oEl.innerHTML="";
   questions[i].o.forEach((op,idx)=>{
     const d=document.createElement("div");
@@ -184,24 +157,25 @@ function load(){
 function pick(el,idx){
   if(selected!==null) return;
   selected=idx;
-  if(idx===questions[i].a) el.classList.add("correct");
+  if(idx===questions[i].a){el.classList.add("correct");score++;}
   else el.classList.add("wrong");
 }
 
 function startTimer(){
   clearInterval(timer);
-  t=10;
-  timeEl.innerText=t;
+  time=10;
+  timeEl.innerText=time;
   timer=setInterval(()=>{
-    t--;
-    timeEl.innerText=t;
-    if(t===0){ clearInterval(timer); next(); }
+    time--; timeEl.innerText=time;
+    if(time===0){clearInterval(timer);nextQuestion();}
   },1000);
 }
 
-function next(){
+function nextQuestion(){
+  clearInterval(timer);
   i++;
   if(i<questions.length) load();
+  else showResult();
 }
 
 function renderList(){
@@ -214,8 +188,23 @@ function renderList(){
   });
 }
 
+function showResult(){
+  const accuracy=Math.round((score/questions.length)*100);
+  let badge="🥉 Beginner";
+  if(accuracy>=80) badge="🥇 Expert";
+  else if(accuracy>=50) badge="🥈 Intermediate";
+
+  left.innerHTML=`
+    <div class="result">
+      <h2>Quiz Completed 🎉</h2>
+      <p>Score: <strong>${score}/10</strong></p>
+      <p>Accuracy: <strong>${accuracy}%</strong></p>
+      <div class="badge">${badge}</div>
+    </div>`;
+  document.querySelector(".right").style.display="none";
+}
+
 load();
 </script>
-
 </body>
 </html>
