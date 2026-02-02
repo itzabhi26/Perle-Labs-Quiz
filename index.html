@@ -8,39 +8,54 @@
 <style>
 body{
   margin:0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: radial-gradient(circle at top, #020617, #000000);
+  font-family:"Segoe UI", Arial, sans-serif;
+  background:radial-gradient(circle at top,#020617,#000000);
   color:#e5e7eb;
 }
+
+/* ===== HEADER ===== */
+.header{
+  display:grid;
+  grid-template-columns:1fr 2fr 1fr;
+  align-items:center;
+  padding:20px 40px;
+}
+.header img{
+  width:56px;
+}
+.header-center{
+  text-align:center;
+  font-size:36px;
+  font-weight:900;
+  letter-spacing:0.6px;
+}
+.header-right{
+  text-align:right;
+}
+.header-right img{
+  width:52px;
+  border-radius:50%;
+  border:2px solid #10b981;
+}
+
+/* ===== APP ===== */
 .app{
-  max-width:1200px;
+  max-width:1100px;
   margin:auto;
-  padding:40px 20px;
+  padding:10px 20px 40px;
   display:grid;
   grid-template-columns:2fr 1fr;
   gap:30px;
 }
 .card{
-  background:rgba(2,6,23,0.9);
+  background:rgba(2,6,23,.95);
   border-radius:18px;
   padding:32px;
-  border:1px solid rgba(16,185,129,0.25);
-  box-shadow:0 0 40px rgba(16,185,129,0.08);
+  border:1px solid rgba(16,185,129,.25);
+  box-shadow:0 0 40px rgba(16,185,129,.08);
 }
-.logo img{
-  width:72px;
-  filter:drop-shadow(0 0 12px rgba(16,185,129,.5));
-}
-.heading{
-  font-size:30px;
-  font-weight:800;
-  margin:20px 0 10px;
-  letter-spacing:0.5px;
-}
-.sub{
-  opacity:.7;
-  margin-bottom:30px;
-}
+
+/* ===== QUESTION ===== */
 .question{
   font-size:24px;
   font-weight:700;
@@ -54,30 +69,16 @@ body{
   display:flex;
   gap:14px;
   cursor:pointer;
-  transition:.2s;
-}
-.option:hover{
-  border-color:#10b981;
 }
 .option span{
-  width:38px;
-  height:38px;
-  border-radius:10px;
+  width:38px;height:38px;border-radius:10px;
   background:rgba(15,23,42,.9);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  color:#10b981;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;color:#10b981;
 }
-.option.correct{
-  background:rgba(16,185,129,.15);
-  border-color:#10b981;
-}
-.option.wrong{
-  background:rgba(239,68,68,.15);
-  border-color:#ef4444;
-}
+.option.correct{background:rgba(16,185,129,.18);border-color:#10b981;}
+.option.wrong{background:rgba(239,68,68,.18);border-color:#ef4444;}
+
 .submit{
   margin-top:24px;
   background:linear-gradient(135deg,#10b981,#22c55e);
@@ -89,24 +90,15 @@ body{
   font-weight:700;
   cursor:pointer;
 }
-.right{
-  display:flex;
-  flex-direction:column;
-  gap:24px;
-}
+
+/* ===== RIGHT ===== */
+.right{display:flex;flex-direction:column;gap:24px;}
 .circle{
-  width:130px;
-  height:130px;
-  border-radius:50%;
+  width:130px;height:130px;border-radius:50%;
   border:8px solid rgba(16,185,129,.25);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:28px;
-  font-weight:800;
-  color:#10b981;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:800;color:#10b981;
   margin:auto;
-  box-shadow:0 0 30px rgba(16,185,129,.2);
 }
 .list div{
   padding:12px 14px;
@@ -115,43 +107,62 @@ body{
   background:rgba(15,23,42,.8);
   border:1px solid rgba(148,163,184,.2);
 }
-.list .active{
-  background:rgba(16,185,129,.18);
-  border-color:#10b981;
+.list .active{background:rgba(16,185,129,.18);border-color:#10b981;}
+
+/* ===== RESULT ===== */
+.result-wrapper{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at top,#020617,#000000);
+}
+.result-card{
+  background:rgba(2,6,23,.96);
+  border:1px solid rgba(16,185,129,.35);
+  border-radius:22px;
+  padding:46px 54px;
+  text-align:center;
+  box-shadow:0 0 70px rgba(16,185,129,.25);
+}
+.result-logo{
+  width:80px;
+  margin-bottom:16px;
+}
+.result-badge{font-size:34px;margin-top:16px;}
+.result-footer{
+  margin-top:26px;
+  font-size:18px;
   font-weight:600;
+  opacity:.85;
 }
-.result{
-  text-align:center;
-}
-.badge{
-  font-size:30px;
-  margin-top:12px;
-}
-footer{
-  grid-column:1/-1;
-  text-align:center;
-  font-size:12px;
-  opacity:.6;
-  margin-top:20px;
+.result-footer img{
+  width:32px;
+  border-radius:50%;
+  margin-left:8px;
+  vertical-align:middle;
 }
 </style>
 </head>
 
 <body>
+
+<!-- HEADER -->
+<div class="header">
+  <img src="https://i.postimg.cc/25QZTBk4/jwl-Om5I9-400x400-(1).png">
+  <div class="header-center">Perle Labs • AI Knowledge Challenge</div>
+  <div class="header-right">
+    <img src="https://i.postimg.cc/LsR5q5jg/3n-Uo-Q0ss-400x400.jpg">
+  </div>
+</div>
+
 <div class="app">
 
 <!-- LEFT -->
-<div class="card" id="left">
-  <div class="logo">
-    <img src="https://i.postimg.cc/25QZTBk4/jwl-Om5I9-400x400-(1).png">
-  </div>
-
-  <div class="heading">Perle Labs • AI Knowledge Challenge</div>
-  <div class="sub">Test your understanding of the Perle ecosystem</div>
-
+<div class="card">
   <div id="question" class="question"></div>
   <div id="options"></div>
-
   <button class="submit" onclick="nextQuestion()">Submit Answer</button>
 </div>
 
@@ -161,13 +172,8 @@ footer{
     <div class="circle" id="time">10</div>
     <p style="text-align:center;opacity:.7">Timer Remaining</p>
   </div>
-
   <div class="card list" id="list"></div>
 </div>
-
-<footer>
-Created by <strong>Itz_Abhi</strong>
-</footer>
 
 </div>
 
@@ -185,13 +191,11 @@ const questions=[
  {q:"Core community value?",o:["Quantity","Fast rewards","Respect","Competition"],a:2}
 ];
 
-let i=0,selected=null,score=0,time=10,timer;
-
+let i=0,selected=null,score=0,time=15,timer;
 const qEl=document.getElementById("question");
 const oEl=document.getElementById("options");
 const timeEl=document.getElementById("time");
 const listEl=document.getElementById("list");
-const left=document.getElementById("left");
 
 function load(){
   selected=null;
@@ -217,7 +221,7 @@ function pick(el,idx){
 
 function startTimer(){
   clearInterval(timer);
-  time=10;
+  time=15;
   timeEl.innerText=time;
   timer=setInterval(()=>{
     time--; timeEl.innerText=time;
@@ -248,14 +252,20 @@ function showResult(){
   if(accuracy>=80) badge="🥇 Expert";
   else if(accuracy>=50) badge="🥈 Intermediate";
 
-  left.innerHTML=`
-    <div class="result">
-      <h2>Challenge Completed 🤖</h2>
-      <p>Score: <strong>${score}/10</strong></p>
-      <p>Accuracy: <strong>${accuracy}%</strong></p>
-      <div class="badge">${badge}</div>
-    </div>`;
-  document.querySelector(".right").style.display="none";
+  document.body.innerHTML=`
+  <div class="result-wrapper">
+    <div class="result-card">
+      <img src="https://i.postimg.cc/25QZTBk4/jwl-Om5I9-400x400-(1).png" class="result-logo">
+      <h2>Quiz Completed 🎉</h2>
+      <p><strong>Score:</strong> ${score}/10</p>
+      <p><strong>Accuracy:</strong> ${accuracy}%</p>
+      <div class="result-badge">${badge}</div>
+      <div class="result-footer">
+        Created by Itz_Abhi
+        <img src="https://i.postimg.cc/LsR5q5jg/3n-Uo-Q0ss-400x400.jpg">
+      </div>
+    </div>
+  </div>`;
 }
 
 load();
